@@ -10,9 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alfredo.DAO.ClienteDao;
 import com.alfredo.model.Cliente;
-import com.google.gson.Gson;
 
 
 /**
@@ -33,81 +31,8 @@ public class ServeleteControler extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		Cliente cl = new Cliente();
-		ClienteDao cld = new ClienteDao();
-		
-		String id = null;
-		String nombrepr = null;
-		String apellidopr = null;
-		String edadpr = null;
-		String direccionpr = null;
-		String duipr = null;
-		String nitpr = null;
-		String grupopr = null;
-		String notapr = null;
-		
-		try {
-		 id= request.getParameter("Id");
-		 nombrepr= request.getParameter("Unombre");
-		 apellidopr= request.getParameter("Uapellido");
-		 edadpr= request.getParameter("Uedad");
-		 direccionpr= request.getParameter("Udireccion");
-		 duipr= request.getParameter("Udui");
-		 nitpr= request.getParameter("Unit");
-		 grupopr= request.getParameter("Ugrupo");
-		 notapr= request.getParameter("Unota");
-		 
-			cl.setId(Integer.parseInt(id));
-			cl.setNombre(nombrepr);
-			cl.setApellido(apellidopr);
-			cl.setEdad(Integer.parseInt(edadpr));
-			cl.setDireccion(direccionpr);
-			cl.setDui(duipr);
-			cl.setNit(nitpr);
-			cl.setGrupoDeClaseProgramacion3Alquepertenece(Integer.parseInt(grupopr));
-			cl.setUtimaNotaObtenidaEnProgramacion2(Double.parseDouble(notapr));
-		}catch (Exception e) {
-			
-		}
-		
-
-		
-		String acction=request.getParameter("btn");
-		
-		if(acction.equals("Guardar")) {
-		cl.setId(Integer.parseInt(id));
-		cl.setNombre(nombrepr);
-		cl.setApellido(apellidopr);
-		cl.setEdad(Integer.parseInt(edadpr));
-		cl.setDireccion(direccionpr);
-		cl.setDui(duipr);
-		cl.setNit(nitpr);
-		cl.setGrupoDeClaseProgramacion3Alquepertenece(Integer.parseInt(grupopr));
-		cl.setUtimaNotaObtenidaEnProgramacion2(Double.parseDouble(notapr));
-		
-		cld.agregarDatos(cl);
-		}
-		else if(acction.equals("Actualizar")) {
-		cl.setId(Integer.parseInt(id));
-		cl.setNombre(nombrepr);
-		cl.setApellido(apellidopr);
-		cl.setEdad(Integer.parseInt(edadpr));
-		cl.setDireccion(direccionpr);
-		cl.setDui(duipr);
-		cl.setNit(nitpr);
-		cl.setGrupoDeClaseProgramacion3Alquepertenece(Integer.parseInt(grupopr));
-		cl.setUtimaNotaObtenidaEnProgramacion2(Double.parseDouble(notapr));
-		
-		cld.actualizarDatos(cl);
-		}
-		else if(acction.equals("Eliminar")) {
-			cl.setId(Integer.parseInt(id));
-			
-			cld.eliminarDatos(cl);
-		};
-		response.sendRedirect("index.jsp");
-		/*response.getWriter().append("Served at: ").append(request.getContextPath());*/
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
@@ -116,19 +41,87 @@ public class ServeleteControler extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-		ClienteDao cldao = new ClienteDao();
-		Gson json = new Gson();
+
+		String acction=request.getParameter("btn");
+		
+		EntityManager em;
+		EntityManagerFactory emf;
+		emf = Persistence.createEntityManagerFactory("Carlos_Alfredo_Moran_Cartagena");
+		em = emf.createEntityManager();
+		
+		Cliente cl = new Cliente();
 		
 		try {
-			response.getWriter().append(json.toJson(cldao.clienteLista()));
 			
+		
+		String id = request.getParameter("Id");
+		String nombrepr = request.getParameter("Unombre");
+		String apellidopr = request.getParameter("Uapellido");
+		String edadpr = request.getParameter("Uedad");
+		String direccionpr = request.getParameter("Udireccion");
+		String duipr = request.getParameter("Udui");
+		String nitpr = request.getParameter("Unit");
+		String grupopr = request.getParameter("Ugrupo");
+		String notapr = request.getParameter("Unota");
+		
+		cl.setId(Integer.parseInt(id));
+		cl.setNombre(nombrepr);
+		cl.setApellido(apellidopr);
+		cl.setEdad(Integer.parseInt(edadpr));
+		cl.setDireccion(direccionpr);
+		cl.setDui(duipr);
+		cl.setNit(nitpr);
+		cl.setGrupoDeClaseProgramacion3Alquepertenece(Integer.parseInt(grupopr));
+		cl.setUtimaNotaObtenidaEnProgramacion2(Double.parseDouble(notapr));
+		
 		} catch (Exception e) {
-			
-			System.out.println(e);
+			// TODO: handle exception
 		}
 		
-
-
+		if (acction.equals("Guardar")) {
+			
+			em.getTransaction().begin();
+			em.persist(cl);
+			em.flush();
+			em.getTransaction().commit();
+			
+		}else if (acction.equals("Actualizar")) {
+			
+			em.getTransaction().begin();
+			em.merge(cl);
+			em.flush();
+			em.getTransaction().commit();
+			
+		}else if (acction.equals("Eliminar")) {
+			
+			cl = em.getReference(Cliente.class, cl.getId());
+			em.getTransaction().begin();
+			em.remove(cl);
+			em.flush();
+			em.getTransaction().commit();
+			
+		}
+		
+		response.sendRedirect("index.jsp");
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 	}
